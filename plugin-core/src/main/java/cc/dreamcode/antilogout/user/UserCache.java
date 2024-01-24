@@ -3,7 +3,10 @@ package cc.dreamcode.antilogout.user;
 import com.google.common.collect.Maps;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 public class UserCache {
 

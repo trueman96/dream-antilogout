@@ -32,7 +32,7 @@ dependencies {
 
     implementation("eu.okaeri:okaeri-placeholders-core:4.0.7")
 
-    implementation("eu.okaeri:okaeri-tasker-bukkit:1.2.0")
+    implementation("eu.okaeri:okaeri-tasker-bukkit:2.1.0-beta.3")
 
     implementation("com.github.cryptomorin:XSeries:9.8.1")
 }

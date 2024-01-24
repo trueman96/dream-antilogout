@@ -1,8 +1,8 @@
 package cc.dreamcode.antilogout;
 
-import cc.dreamcode.antilogout.config.MessageConfig;
-import cc.dreamcode.antilogout.config.PluginConfig;
+import cc.dreamcode.antilogout.listener.PlayerDataListener;
 import cc.dreamcode.antilogout.user.UserCache;
+import cc.dreamcode.antilogout.user.UserFactory;
 import cc.dreamcode.command.bukkit.BukkitCommandProvider;
 import cc.dreamcode.notice.minecraft.bukkit.serdes.BukkitNoticeSerdes;
 import cc.dreamcode.platform.DreamVersion;
@@ -37,15 +37,19 @@ public final class AntiLogoutPlugin extends DreamBukkitPlatform implements Dream
         componentManager.registerResolver(RunnableComponentResolver.class);
 
         componentManager.registerResolver(ConfigurationComponentResolver.class);
-        componentManager.registerComponent(MessageConfig.class, messageConfig ->
-                this.getInject(BukkitCommandProvider.class).ifPresent(bukkitCommandProvider -> {
-                    bukkitCommandProvider.setRequiredPermissionMessage(messageConfig.noPermission.getText());
-                    bukkitCommandProvider.setRequiredPlayerMessage(messageConfig.notPlayer.getText());
-                }));
+        componentManager.registerComponent(AntiLogoutConfig.class, config -> {
+            componentManager.setDebug(config.getPluginWrapper().isDebug());
 
-        componentManager.registerComponent(PluginConfig.class, pluginConfig -> componentManager.setDebug(pluginConfig.debug));
+            this.getInject(BukkitCommandProvider.class).ifPresent(bukkitCommandProvider -> {
+                bukkitCommandProvider.setRequiredPermissionMessage(config.getMessageWrapper().getNoPermission().getText());
+                bukkitCommandProvider.setRequiredPlayerMessage(config.getMessageWrapper().getNotPlayer().getText());
+            });
+        });
 
         componentManager.registerComponent(UserCache.class);
+        componentManager.registerComponent(UserFactory.class);
+
+        componentManager.registerComponent(PlayerDataListener.class);
     }
 
     @Override
