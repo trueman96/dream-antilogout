@@ -2,6 +2,7 @@ package cc.dreamcode.antilogout;
 
 import cc.dreamcode.antilogout.config.MessageConfig;
 import cc.dreamcode.antilogout.config.PluginConfig;
+import cc.dreamcode.antilogout.user.UserCache;
 import cc.dreamcode.command.bukkit.BukkitCommandProvider;
 import cc.dreamcode.notice.minecraft.bukkit.serdes.BukkitNoticeSerdes;
 import cc.dreamcode.platform.DreamVersion;
@@ -12,17 +13,12 @@ import cc.dreamcode.platform.bukkit.component.ConfigurationComponentResolver;
 import cc.dreamcode.platform.bukkit.component.ListenerComponentResolver;
 import cc.dreamcode.platform.bukkit.component.RunnableComponentResolver;
 import cc.dreamcode.platform.component.ComponentManager;
-import cc.dreamcode.platform.persistence.DreamPersistence;
-import cc.dreamcode.platform.persistence.component.DocumentPersistenceComponentResolver;
-import cc.dreamcode.platform.persistence.component.DocumentRepositoryComponentResolver;
 import eu.okaeri.configs.serdes.OkaeriSerdesPack;
-import eu.okaeri.configs.yaml.bukkit.serdes.SerdesBukkit;
-import eu.okaeri.persistence.document.DocumentPersistence;
 import eu.okaeri.tasker.bukkit.BukkitTasker;
 import lombok.Getter;
 import lombok.NonNull;
 
-public final class AntiLogoutPlugin extends DreamBukkitPlatform implements DreamBukkitConfig, DreamPersistence {
+public final class AntiLogoutPlugin extends DreamBukkitPlatform implements DreamBukkitConfig {
 
     @Getter private static AntiLogoutPlugin antiLogoutPlugin;
 
@@ -47,17 +43,9 @@ public final class AntiLogoutPlugin extends DreamBukkitPlatform implements Dream
                     bukkitCommandProvider.setRequiredPlayerMessage(messageConfig.notPlayer.getText());
                 }));
 
-        componentManager.registerComponent(PluginConfig.class, pluginConfig -> {
-            componentManager.setDebug(pluginConfig.debug);
+        componentManager.registerComponent(PluginConfig.class, pluginConfig -> componentManager.setDebug(pluginConfig.debug));
 
-            this.registerInjectable(pluginConfig.storageConfig);
-
-            componentManager.registerResolver(DocumentPersistenceComponentResolver.class);
-            componentManager.registerComponent(DocumentPersistence.class);
-
-            componentManager.registerResolver(DocumentRepositoryComponentResolver.class);
-            componentManager.registerComponent(UserRepository.class);
-        });
+        componentManager.registerComponent(UserCache.class);
     }
 
     @Override
@@ -73,13 +61,6 @@ public final class AntiLogoutPlugin extends DreamBukkitPlatform implements Dream
     public @NonNull OkaeriSerdesPack getConfigSerdesPack() {
         return registry -> {
             registry.register(new BukkitNoticeSerdes());
-        };
-    }
-
-    @Override
-    public @NonNull OkaeriSerdesPack getPersistenceSerdesPack() {
-        return registry -> {
-            registry.register(new SerdesBukkit());
         };
     }
 

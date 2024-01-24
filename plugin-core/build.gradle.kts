@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 repositories {
     maven("https://repo.codemc.io/repository/nms")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -12,7 +10,6 @@ dependencies {
     implementation("cc.dreamcode.platform:bukkit:1.9.8")
     implementation("cc.dreamcode.platform:bukkit-command:1.9.8")
     implementation("cc.dreamcode.platform:bukkit-config:1.9.8")
-    implementation("cc.dreamcode.platform:persistence:1.9.8")
 
     implementation("cc.dreamcode:utilities:1.2.22")
     implementation("cc.dreamcode:utilities-bukkit:1.2.22")
@@ -28,10 +25,6 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.0-beta.5")
 
-    implementation("eu.okaeri:okaeri-persistence-flat:2.0.0-beta.1")
-    implementation("eu.okaeri:okaeri-persistence-jdbc:2.0.0-beta.1")
-    implementation("eu.okaeri:okaeri-persistence-mongo:2.0.0-beta.1")
-
     implementation("eu.okaeri:okaeri-configs-json-gson:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5")
 
@@ -44,25 +37,27 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:9.8.1")
 }
 
-tasks.withType<ShadowJar> {
+tasks {
+    shadowJar {
 
-    archiveFileName.set("dream-antilogout-${project.version}.jar")
+        archiveFileName.set("dream-antilogout-${project.version}.jar")
 
-    minimize()
+        minimize()
 
-    relocate("com.cryptomorin", "cc.dreamcode.antilogout.libs.com.cryptomorin")
-    relocate("eu.okaeri", "cc.dreamcode.antilogout.libs.eu.okaeri")
+        relocate("com.cryptomorin", "cc.dreamcode.antilogout.libs.com.cryptomorin")
+        relocate("eu.okaeri", "cc.dreamcode.antilogout.libs.eu.okaeri")
 
-    relocate("cc.dreamcode.platform", "cc.dreamcode.antilogout.libs.cc.dreamcode.platform")
-    relocate("cc.dreamcode.utilities", "cc.dreamcode.antilogout.libs.cc.dreamcode.utilities")
-    relocate("cc.dreamcode.menu", "cc.dreamcode.antilogout.libs.cc.dreamcode.menu")
-    relocate("cc.dreamcode.command", "cc.dreamcode.antilogout.libs.cc.dreamcode.command")
-    relocate("cc.dreamcode.notice", "cc.dreamcode.antilogout.libs.cc.dreamcode.notice")
+        relocate("cc.dreamcode.platform", "cc.dreamcode.antilogout.libs.cc.dreamcode.platform")
+        relocate("cc.dreamcode.utilities", "cc.dreamcode.antilogout.libs.cc.dreamcode.utilities")
+        relocate("cc.dreamcode.menu", "cc.dreamcode.antilogout.libs.cc.dreamcode.menu")
+        relocate("cc.dreamcode.command", "cc.dreamcode.antilogout.libs.cc.dreamcode.command")
+        relocate("cc.dreamcode.notice", "cc.dreamcode.antilogout.libs.cc.dreamcode.notice")
 
-    relocate("org.bson", "cc.dreamcode.antilogout.libs.org.bson")
-    relocate("com.mongodb", "cc.dreamcode.antilogout.libs.com.mongodb")
-    relocate("com.zaxxer", "cc.dreamcode.antilogout.libs.com.zaxxer")
-    relocate("org.slf4j", "cc.dreamcode.antilogout.libs.org.slf4j")
-    relocate("org.json", "cc.dreamcode.antilogout.libs.org.json")
-    relocate("com.google.gson", "cc.dreamcode.antilogout.libs.com.google.gson")
+        relocate("org.bson", "cc.dreamcode.antilogout.libs.org.bson")
+        relocate("com.mongodb", "cc.dreamcode.antilogout.libs.com.mongodb")
+        relocate("com.zaxxer", "cc.dreamcode.antilogout.libs.com.zaxxer")
+        relocate("org.slf4j", "cc.dreamcode.antilogout.libs.org.slf4j")
+        relocate("org.json", "cc.dreamcode.antilogout.libs.org.json")
+        relocate("com.google.gson", "cc.dreamcode.antilogout.libs.com.google.gson")
+    }
 }
