@@ -1,4 +1,4 @@
-main: "cc.dreamcode.template.TemplatePlugin"
+main: "cc.dreamcode.antilogout.TemplatePlugin"
 version: "1.0-InDEV"
 name: "Dream-Template"
 description: "Dream-Template plugin written by dreamcode.cc"

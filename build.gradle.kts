@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "cc.dreamcode.template"
+    group = "cc.dreamcode.antilogout"
     version = "1.0-InDEV"
 
     apply(plugin = "java-library")
@@ -49,7 +49,6 @@ subprojects {
     apply(plugin = "com.github.johnrengelman.shadow")
 
     dependencies {
-        /* General */
         val lombok = "1.18.30"
         compileOnly("org.projectlombok:lombok:$lombok")
         annotationProcessor("org.projectlombok:lombok:$lombok")
