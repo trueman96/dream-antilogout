@@ -32,8 +32,10 @@ public class PlayerDataListener implements Listener {
     @EventHandler
     public void playerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+
         this.tasker.newSharedChain(player.getUniqueId().toString())
-                .supplyAsync(() -> this.userCache.findUserByUniqueId(player.getUniqueId()))
+                .supplyAsync(player::getUniqueId)
+                .transformAsync(this.userCache::findUserByUniqueId)
                 .abortIfAsync(Objects::isNull)
                 .acceptAsync(this.userCache::remove)
                 .execute();
