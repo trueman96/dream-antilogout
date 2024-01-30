@@ -6,10 +6,12 @@ import cc.dreamcode.platform.bukkit.component.configuration.Configuration;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.*;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
-@Setter
+@SuppressWarnings("FieldMayBeFinal")
 @Configuration(child = "config.yml")
 @Header("## dream-antilogout (Main-Config) ##")
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
@@ -19,27 +21,44 @@ public class AntiLogoutConfig extends OkaeriConfig {
     private MessageWrapper messageWrapper = new MessageWrapper();
 
     @Getter
-    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
     @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
     public static class PluginWrapper extends OkaeriConfig {
 
         @Comment("Debug pokazuje dodatkowe informacje do konsoli. Lepiej wyłączyć. :P")
         private boolean debug = true;
 
+        private List<String> disallowedCommands = Arrays.asList(
+                "ec",
+                "heal",
+                "feed",
+                "repair",
+                "repair all"
+        );
+
+        private List<UUID> usedProtection = new ArrayList<>();
+        private Map<UUID, Long> protectionSaved = new ConcurrentHashMap<>();
+
     }
 
     @Getter
-    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
     @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
     public static class MessageWrapper extends OkaeriConfig {
 
-        private BukkitNotice usage = new BukkitNotice(MinecraftNoticeType.CHAT, "&7Poprawne uzycie: &5{usage}");
-        private BukkitNotice noPermission = new BukkitNotice(MinecraftNoticeType.CHAT, "&cNie posiadasz uprawnien.");
-        private BukkitNotice notPlayer = new BukkitNotice(MinecraftNoticeType.CHAT, "&cNie jestes aby to zrobic.");
+        private BukkitNotice usage = BukkitNotice.of(MinecraftNoticeType.CHAT, "&7Poprawne uzycie: &5{usage}");
+        private BukkitNotice noPermission = BukkitNotice.of(MinecraftNoticeType.CHAT, "&cNie posiadasz uprawnien.");
+        private BukkitNotice notPlayer = BukkitNotice.of(MinecraftNoticeType.CHAT, "&cNie jestes aby to zrobic.");
 
-        private BukkitNotice playerNotFound = new BukkitNotice(MinecraftNoticeType.CHAT, "&cPodanego gracza nie znaleziono.");
-        private BukkitNotice cannotDoAtMySelf = new BukkitNotice(MinecraftNoticeType.CHAT, "&cNie mozesz tego zrobic na sobie.");
-        private BukkitNotice numberIsNotValid = new BukkitNotice(MinecraftNoticeType.CHAT, "&cPodana liczba nie jest cyfra.");
+        private BukkitNotice playerNotFound = BukkitNotice.of(MinecraftNoticeType.CHAT, "&cPodanego gracza nie znaleziono.");
+        private BukkitNotice cannotDoAtMySelf = BukkitNotice.of(MinecraftNoticeType.CHAT, "&cNie mozesz tego zrobic na sobie.");
+        private BukkitNotice numberIsNotValid = BukkitNotice.of(MinecraftNoticeType.CHAT, "&cPodana liczba nie jest cyfra.");
+
+        private BukkitNotice youHaveProtection = BukkitNotice.of(MinecraftNoticeType.CHAT,
+                "&cPosiadasz aktualnie ochrone startową! Zostało &4{time}&c! Jeśli chcesz ją wyłączyć użyj &4/wylaczochrone&c.");
+
+        private BukkitNotice attackedPlayerHasProtection = BukkitNotice.of(MinecraftNoticeType.CHAT,
+                "&cTen gracz posiada aktualnie ochrone startową! Zostało &4{time}&c!");
 
     }
 

@@ -1,8 +1,8 @@
 package cc.dreamcode.antilogout;
 
-import cc.dreamcode.antilogout.listener.PlayerDataListener;
 import cc.dreamcode.antilogout.user.UserCache;
 import cc.dreamcode.antilogout.user.UserFactory;
+import cc.dreamcode.antilogout.user.UserListener;
 import cc.dreamcode.command.bukkit.BukkitCommandProvider;
 import cc.dreamcode.notice.minecraft.bukkit.serdes.BukkitNoticeSerdes;
 import cc.dreamcode.platform.DreamVersion;
@@ -20,7 +20,8 @@ import lombok.NonNull;
 
 public final class AntiLogoutPlugin extends DreamBukkitPlatform implements DreamBukkitConfig {
 
-    @Getter private static AntiLogoutPlugin antiLogoutPlugin;
+    @Getter
+    private static AntiLogoutPlugin antiLogoutPlugin;
 
     @Override
     public void load(@NonNull ComponentManager componentManager) {
@@ -49,7 +50,7 @@ public final class AntiLogoutPlugin extends DreamBukkitPlatform implements Dream
         componentManager.registerComponent(UserCache.class);
         componentManager.registerComponent(UserFactory.class);
 
-        componentManager.registerComponent(PlayerDataListener.class);
+        componentManager.registerComponent(UserListener.class);
     }
 
     @Override

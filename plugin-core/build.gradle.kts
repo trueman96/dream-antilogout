@@ -1,6 +1,7 @@
 repositories {
     maven("https://repo.codemc.io/repository/nms")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
@@ -35,6 +36,8 @@ dependencies {
     implementation("eu.okaeri:okaeri-tasker-bukkit:2.1.0-beta.3")
 
     implementation("com.github.cryptomorin:XSeries:9.8.1")
+
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
 }
 
 tasks {
