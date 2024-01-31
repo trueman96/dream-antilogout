@@ -7,7 +7,11 @@ import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.*;
 import lombok.Getter;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -36,7 +40,8 @@ public class AntiLogoutConfig extends OkaeriConfig {
                 "repair all"
         );
 
-        private List<UUID> usedProtection = new ArrayList<>();
+        private Duration combatTime = Duration.ofSeconds(21), protectionTime = Duration.ofMinutes(5);
+
         private Map<UUID, Long> protectionSaved = new ConcurrentHashMap<>();
 
     }

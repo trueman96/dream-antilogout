@@ -1,13 +1,11 @@
 package cc.dreamcode.antilogout.user;
 
 import cc.dreamcode.antilogout.AntiLogoutConfig;
-import cc.dreamcode.antilogout.event.AntilogoutPlayerDeathEvent;
 import cc.dreamcode.antilogout.helper.AntiLogoutHelper;
 import cc.dreamcode.utilities.TimeUtil;
 import eu.okaeri.injector.annotation.Inject;
 import eu.okaeri.tasker.core.Tasker;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +18,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UserListener implements Listener {
@@ -32,20 +29,38 @@ public class UserListener implements Listener {
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         this.tasker.newSharedChain(player.getUniqueId().toString())
                 .supplyAsync(() -> this.userFactory.create(player.getUniqueId(), player.getName()))
-                .acceptAsync(this.userCache::add)
+                .acceptAsync(user -> {
+                    if (this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().containsKey(player.getUniqueId())) {
+                        user.setProtection(System.currentTimeMillis() + this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().get(player.getUniqueId()));
+                        this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().remove(player.getUniqueId());
+                    } else {
+                        user.setProtection(System.currentTimeMillis() + this.antiLogoutConfig.getPluginWrapper().getProtectionTime().toMillis());
+                    }
+
+                    this.userCache.add(user);
+                })
                 .execute();
     }
 
     @EventHandler
     public void playerQuit(PlayerQuitEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         this.tasker.newSharedChain(player.getUniqueId().toString())
-                .supplyAsync(player::getUniqueId)
-                .transformAsync(this.userCache::findUserByUniqueId)
-                .acceptAsync(this.userCache::remove)
+                .supplyAsync(() -> this.userCache.findUserByUniqueId(player.getUniqueId()))
+                .acceptAsync(user -> {
+                    if (user.isInCombat()) {
+                        player.setHealth(0);
+                    }
+
+                    if (user.hasProtection()) {
+                        this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().put(player.getUniqueId(), user.getProtection() - System.currentTimeMillis());
+                    }
+
+                    this.userCache.remove(user);
+                })
                 .execute();
     }
 
@@ -53,31 +68,8 @@ public class UserListener implements Listener {
     public void playerDeath(PlayerDeathEvent event) {
         event.setDeathMessage(null);
         Player victim = event.getEntity();
-        Player killer = victim.getKiller();
         User victimUser = this.userCache.findUserByPlayer(victim);
-
-        if ((killer == null || killer.equals(victim)) && victimUser.getLastAttackPlayer() != null && victimUser.isInCombat()) {
-            killer = victimUser.getLastAttackPlayer();
-        }
-
-        if (killer == null) {
-            victimUser.resetCombat();
-            return;
-        }
-
-        User killerUser = this.userCache.findUserByPlayer(killer);
-        User assistantUser = null;
-        if (victimUser.getLastAssistPlayer() != null
-                && victimUser.getLastAssistTime() > System.currentTimeMillis()
-                && !victimUser.getLastAssistPlayer().getUniqueId().equals(killer.getUniqueId())) {
-
-            Player assistant = victimUser.getLastAssistPlayer();
-            assistantUser = this.userCache.findUserByPlayer(assistant);
-        }
-
         victimUser.resetCombat();
-
-        Bukkit.getPluginManager().callEvent(new AntilogoutPlayerDeathEvent(event, victimUser, killerUser, assistantUser));
     }
 
     @EventHandler
@@ -114,27 +106,19 @@ public class UserListener implements Listener {
             return;
         }
 
-        //todo: add combat time in cfg
-        victimUser.setLastAttackTime(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(31));
-        attackerUser.setLastAttackTime(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(31));
-
-        if (victimUser.getLastAttackPlayer() != attacker) {
-            victimUser.setLastAssistPlayer(victimUser.getLastAttackPlayer());
-            victimUser.setLastAssistTime(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60));
-        }
-
-        victimUser.setLastAttackPlayer(attacker);
-        attackerUser.setLastAttackPlayer(victim);
+        long combatTime = this.antiLogoutConfig.getPluginWrapper().getCombatTime().toMillis();
+        victimUser.setLastAttackTime(System.currentTimeMillis() + combatTime);
+        attackerUser.setLastAttackTime(System.currentTimeMillis() + combatTime);
     }
 
     @EventHandler
     public void playerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        //todo:
+
     }
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
-        //todo: block interactions
+
     }
 
 }

@@ -3,7 +3,6 @@ package cc.dreamcode.antilogout.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -16,8 +15,7 @@ public class User {
     private final UUID uniqueId;
     private String nickname;
 
-    private Player lastAttackPlayer, lastAssistPlayer;
-    private long lastAttackTime, lastAssistTime, protection;
+    private long lastAttackTime, protection;
 
     public User(UUID uniqueId, String nickname) {
         this.uniqueId = uniqueId;
@@ -30,9 +28,6 @@ public class User {
 
     public void resetCombat() {
         this.lastAttackTime = 0L;
-        this.lastAssistTime = 0L;
-        this.lastAssistPlayer = null;
-        this.lastAttackPlayer = null;
     }
 
     @Override
@@ -52,5 +47,9 @@ public class User {
 
         User user = (User) object;
         return this.uniqueId.equals(user.uniqueId);
+    }
+
+    public boolean hasProtection() {
+        return this.protection > System.currentTimeMillis();
     }
 }
