@@ -57,6 +57,8 @@ public class UserListener implements Listener {
 
                     if (user.hasProtection()) {
                         this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().put(player.getUniqueId(), user.getProtection() - System.currentTimeMillis());
+                    } else {
+                        this.antiLogoutConfig.getPluginWrapper().getProtectionSaved().remove(player.getUniqueId());
                     }
 
                     this.userCache.remove(user);
