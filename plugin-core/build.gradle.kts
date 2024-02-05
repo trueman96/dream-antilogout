@@ -9,7 +9,7 @@ dependencies {
 
     implementation("cc.dreamcode.platform:core:1.9.8")
     implementation("cc.dreamcode.platform:bukkit:1.9.8")
-    implementation("cc.dreamcode.platform:bukkit-command:1.9.8")
+    implementation("cc.dreamcode.platform:bukkit-command:1.9.13")
     implementation("cc.dreamcode.platform:bukkit-config:1.9.8")
 
     implementation("cc.dreamcode:utilities:1.2.22")
